@@ -6,7 +6,7 @@ import { catchError, firstValueFrom, of } from 'rxjs';
 import { AxiosError } from 'axios';
 import AmoLeadResponseInterface from './interface/amoLead-response.interface';
 import AppResponseInterface from './interface/app-response.interface';
-import Lead from './model/Lead';
+import LeadFullInterface from './interface/lead-full.interface';
 import LeadInterface from './interface/lead.interface';
 
 @Injectable()
@@ -32,19 +32,19 @@ export class AppService {
     }
   }
 
-  formatLeads(leads: LeadInterface[]): Promise<Awaited<Lead>[]> {
+  formatLeads(leads: LeadFullInterface[]): Promise<Awaited<LeadInterface>[]> {
     return Promise.all(leads.map(async (lead) => {
       try {
         const pipelineName = await this.getPipelineStatus(lead.pipeline_id, lead.status_id);
         const managerName = await this.getManagerName(lead.responsible_user_id);
 
-        return new Lead(
-          new Date(lead.created_at),
-          managerName,
-          lead.name,
-          pipelineName,
-          lead.price
-        )
+        return {
+          createdAt: new Date(lead.created_at),
+          manager: managerName,
+          name: lead.name,
+          pipeline: pipelineName,
+          price: lead.price
+        }
       } catch (error) {
         throw error;
       }

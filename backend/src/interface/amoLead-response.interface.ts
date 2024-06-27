@@ -1,4 +1,4 @@
-import Lead from './lead.interface';
+import Lead from './lead-full.interface';
 
 export default interface AmoLeadResponseInterface {
   id: number;
